@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:encrypted_chat_app/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:get/get.dart';
 
@@ -17,6 +17,11 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: Text('Chat Screen'),
         centerTitle: true,
+        actions: [
+          IconButton(
+              icon: Icon(FlutterIcons.theme_light_dark_mco),
+              onPressed: hc.changeTheme),
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -25,24 +30,26 @@ class HomeView extends GetView<HomeController> {
           children: <Widget>[
             MessageStream(),
             Container(
-              decoration: kMessageContainerDecoration,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: hc.msgController,
-                      decoration: kTextFieldDecoration,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: hc.msgController,
+                        decoration: kTextFieldDecoration,
+                      ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: hc.sendMessage,
-                    child: Text(
-                      'Send',
-                      style: kSendButtonTextStyle,
+                    IconButton(
+                      onPressed: hc.sendMessage,
+                      icon: Icon(
+                        FlutterIcons.send_mdi,
+                        color: Colors.blue,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -59,11 +66,7 @@ class MessageStream extends StatelessWidget {
       stream: hc.channel.stream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.lightBlueAccent,
-            ),
-          );
+          return Center(child: Text('Start typing something'));
         }
         final json = snapshot.data;
 
@@ -73,16 +76,19 @@ class MessageStream extends StatelessWidget {
 
         for (var messageObj in messages['messages']) {
           final message = jsonDecode(messageObj);
+          if (message['msg'] == '__new_connection__') {
+            print('${message['id']} just joined the chat!');
+          } else {
+            final messageText = hc.decryptMessage(message['msg']);
+            final messageSender = message['id'];
 
-          final messageText = message['msg'];
-          final messageSender = message['id'];
-
-          final messageBubble = MessageBubble(
-            text: messageText,
-            sender: messageSender,
-            isMe: true, //currentUser == messageSender
-          );
-          messageBubbles.add(messageBubble);
+            final messageBubble = MessageBubble(
+              text: messageText,
+              sender: messageSender,
+              isMe: hc.currentUser.value == messageSender,
+            );
+            messageBubbles.add(messageBubble);
+          }
         }
 
         return Expanded(
@@ -117,24 +123,25 @@ class MessageBubble extends StatelessWidget {
             style: TextStyle(fontSize: 10.0, color: Colors.blue),
           ),
           Material(
-              borderRadius: BorderRadius.only(
-                topLeft: isMe ? Radius.circular(30) : Radius.zero,
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-                topRight: !(isMe) ? Radius.circular(30) : Radius.zero,
-              ),
-              elevation: 5.0,
-              color: isMe ? Colors.blue : Colors.white,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: isMe ? Colors.white : Colors.blue,
-                  ),
+            borderRadius: BorderRadius.only(
+              topLeft: isMe ? Radius.circular(30) : Radius.zero,
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+              topRight: !(isMe) ? Radius.circular(30) : Radius.zero,
+            ),
+            elevation: 5.0,
+            color: isMe ? Colors.blue : Colors.white,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: isMe ? Colors.white : Colors.blue,
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     );
