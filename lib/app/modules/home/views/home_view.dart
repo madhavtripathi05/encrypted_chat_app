@@ -17,6 +17,7 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: Text('Chat Screen'),
         centerTitle: true,
+        backgroundColor: Color(0xff5bc084),
         actions: [
           IconButton(
               icon: Icon(FlutterIcons.theme_light_dark_mco),
@@ -45,7 +46,7 @@ class HomeView extends GetView<HomeController> {
                       onPressed: hc.sendMessage,
                       icon: Icon(
                         FlutterIcons.send_mdi,
-                        color: Colors.blue,
+                        color: Color(0xff5bc084),
                       ),
                     ),
                   ],
@@ -120,7 +121,10 @@ class MessageBubble extends StatelessWidget {
         children: <Widget>[
           Text(
             sender,
-            style: TextStyle(fontSize: 10.0, color: Colors.blue),
+            style: TextStyle(
+              fontSize: 10.0,
+              color: Color(0xff5bc084),
+            ),
           ),
           Material(
             borderRadius: BorderRadius.only(
@@ -130,14 +134,14 @@ class MessageBubble extends StatelessWidget {
               topRight: !(isMe) ? Radius.circular(30) : Radius.zero,
             ),
             elevation: 5.0,
-            color: isMe ? Colors.blue : Colors.white,
+            color: isMe ? Color(0xff5bc084) : Colors.white,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Text(
                 text,
                 style: TextStyle(
                   fontSize: 14.0,
-                  color: isMe ? Colors.white : Colors.blue,
+                  color: isMe ? Colors.white : Color(0xff5bc084),
                 ),
               ),
             ),

@@ -3,11 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 final lightTheme = ThemeData(fontFamily: GoogleFonts.nunito().fontFamily);
 final darkTheme = ThemeData(
-    fontFamily: GoogleFonts.nunito().fontFamily,
-    brightness: Brightness.dark);
+    fontFamily: GoogleFonts.nunito().fontFamily, brightness: Brightness.dark);
 
 const kSendButtonTextStyle = TextStyle(
-  color: Colors.blue,
+  color: Color(0xff5bc084),
   fontWeight: FontWeight.bold,
   fontSize: 18.0,
 );
@@ -20,7 +19,7 @@ const kMessageTextFieldDecoration = InputDecoration(
 
 const kMessageContainerDecoration = BoxDecoration(
   border: Border(
-    top: BorderSide(color: Colors.blue, width: 2.0),
+    top: BorderSide(color: Color(0xff5bc084), width: 2.0),
   ),
 );
 
@@ -34,17 +33,17 @@ const kTextStyleForJson1 = TextStyle(
   fontWeight: FontWeight.w700,
 );
 const kTextFieldDecoration = InputDecoration(
-  hintText: 'something',
+  hintText: 'start typing something',
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
   border: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.lightBlueAccent, width: 1.0),
+    borderSide: BorderSide(color: Color(0xff5bc084), width: 1.0),
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.lightBlueAccent, width: 2.0),
+    borderSide: BorderSide(color: Color(0xff5bc084), width: 2.0),
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
 );

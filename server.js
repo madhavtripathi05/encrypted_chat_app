@@ -1,61 +1,43 @@
-// var WebSocket = require('ws');
-
-// var port = process.env.PORT || 3000;
-
-// var server = new WebSocket.Server({
-//   port: port,
-// });
-
-// const connections = [];
-// var messages = [{ id: 'server', msg: 'Welcome!' }];
-
-// let msg = 'Server: Welcome!';
-
-// server.on('connection', function connection(client) {
-//   connections.push(client);
-//   console.log(msg);
-//   client.send(messages);
-//   client.on('message', function incoming(message) {
-//     messages.push(message);
-//     connections.forEach((client) => {
-//       client.sendUTF(messages.utf8Data);
-//     });
-//     // for (var cl of server.clients) {
-//     //   cl.send({ 'msg-list': messages });
-//     // }
-//     console.log('Received the following message:\n' + message);
-//   });
-// });
-
 const SocketServer = require('websocket').server;
 const http = require('http');
 
-const server = http.createServer((req, res) => {});
+// * Create an HTTP server
+const server = http.createServer((_req, _res) => {});
 
-server.listen(3000, () => {
-  console.log('Listening on port 3000...');
-});
+// * Initialize at port 3000
+server.listen(3000, () => console.log('Listening for messages on port 3000'));
 
-wsServer = new SocketServer({ httpServer: server });
+// * Create a WebSocket server
+var wsServer = new SocketServer({ httpServer: server });
 
+// * For tracking users connected to serve
 const connections = [];
+// * For storing messages
 const messages = [];
 
+// * When a request happens
 wsServer.on('request', (req) => {
+  // * Accept any incoming connections
   const connection = req.accept();
   console.log('new connection');
+  // * store in array
   connections.push(connection);
 
+  // * When a message is received
   connection.on('message', (mes) => {
     console.log(mes.utf8Data);
+    // * store in messages array
     messages.push(mes.utf8Data);
-    connections.forEach((element) => {
-      element.send(JSON.stringify({ messages }));
+    // * Send to every other connected user
+    connections.forEach((client) => {
+      client.send(JSON.stringify({ messages }));
     });
   });
 
-  connection.on('close', (resCode, des) => {
+  // * When a connection is closed
+  connection.on('close', (_resCode, _des) => {
     console.log('connection closed');
+    // * Remove that user from connections array
     connections.splice(connections.indexOf(connection), 1);
   });
 });
