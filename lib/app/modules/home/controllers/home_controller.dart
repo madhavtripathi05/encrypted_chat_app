@@ -21,7 +21,7 @@ class HomeController extends GetxController {
   final encrypter = Encrypter(AES(key));
 
   WebSocketChannel channel =
-      WebSocketChannel.connect(Uri.parse('ws://192.168.0.103:3000'));
+      WebSocketChannel.connect(Uri.parse('ws://192.168.0.101:3000'));
 
   final TextEditingController msgController = TextEditingController();
   final TextEditingController userController = TextEditingController();
@@ -32,12 +32,15 @@ class HomeController extends GetxController {
   }
 
   Future<void> checkCurrentUser() async {
+    print('checkCurrentUser');
     currentUser.value = box.read('user') ?? '';
     if (currentUser.value.isNotEmpty) {
+      print(currentUser.value);
       channel.sink.add(
           jsonEncode({'id': currentUser.value, 'msg': '__new_connection__'}));
     }
     if (currentUser.value.isEmpty) {
+      print('new user');
       Get.defaultDialog(
           barrierDismissible: false,
           title: 'Enter your username',
@@ -75,6 +78,7 @@ class HomeController extends GetxController {
   sendMessage() {
     String encryptedMessage =
         encrypter.encrypt(msgController.text, iv: iv).base64;
+    print(encryptedMessage);
     channel.sink
         .add(jsonEncode({'id': currentUser.value, 'msg': encryptedMessage}));
     msgController.clear();
