@@ -25,11 +25,16 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.1
   encrypt: ^4.1.0
+  file_picker: ^3.0.1
   flutter_icons: ^1.1.0
   get: 3.24.0
   get_storage: ^1.4.0
   google_fonts: 1.1.2
+  timeago: ^3.0.2
   web_socket_channel: ^1.2.0
+
+dependency_overrides:
+  plugin_platform_interface: 2.0.0
 
 dev_dependencies:
   flutter_test:

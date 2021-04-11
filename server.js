@@ -5,7 +5,7 @@ const http = require('http');
 const server = http.createServer((_req, _res) => {});
 
 // * Initialize at port 3000
-server.listen(3000, () => console.log('Listening for messages on port 3000'));
+server.listen(3210, () => console.log('Listening for messages on port 3210'));
 
 // * Create a WebSocket server
 var wsServer = new SocketServer({ httpServer: server });

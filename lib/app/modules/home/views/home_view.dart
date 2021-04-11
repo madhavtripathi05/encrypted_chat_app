@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:get/get.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../controllers/home_controller.dart';
 
 final hc = HomeController.to;
@@ -80,12 +80,22 @@ class MessageStream extends StatelessWidget {
           if (message['msg'] == '__new_connection__') {
             print('${message['id']} just joined the chat!');
           } else {
-            final messageText = hc.decryptMessage(message['msg']);
+            final messageText =
+                hc.decryptMessage(message['msg'], message['timestamp']);
             final messageSender = message['id'];
+            final timestamp = message['timestamp'];
+            final parsedDateTime =
+                DateTime.fromMicrosecondsSinceEpoch(int.tryParse(timestamp));
+
+            final timeLeftInSeconds =
+                DateTime.now().difference(parsedDateTime).inSeconds;
+            final time =
+                DateTime.now().subtract(Duration(seconds: timeLeftInSeconds));
 
             final messageBubble = MessageBubble(
               text: messageText,
               sender: messageSender,
+              time: time,
               isMe: hc.currentUser.value == messageSender,
             );
             messageBubbles.add(messageBubble);
@@ -105,10 +115,11 @@ class MessageStream extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  MessageBubble({this.text, this.sender, this.isMe});
+  MessageBubble({this.text, this.sender, this.time, this.isMe});
 
-  final String sender;
   final String text;
+  final String sender;
+  final DateTime time;
   final bool isMe;
 
   @override
@@ -122,10 +133,11 @@ class MessageBubble extends StatelessWidget {
           Text(
             sender,
             style: TextStyle(
-              fontSize: 10.0,
+              fontSize: 12.0,
+              fontWeight: FontWeight.bold,
               color: Color(0xff5bc084),
             ),
-          ),
+          ).marginOnly(bottom: 5),
           Material(
             borderRadius: BorderRadius.only(
               topLeft: isMe ? Radius.circular(30) : Radius.zero,
@@ -146,6 +158,14 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ),
+          Text(
+            '${timeago.format(time)}',
+            style: TextStyle(
+              fontSize: 8.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
+          ).marginOnly(right: 3, top: 5),
         ],
       ),
     );
