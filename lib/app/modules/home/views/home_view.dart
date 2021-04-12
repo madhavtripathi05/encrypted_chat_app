@@ -66,9 +66,9 @@ class MessageStream extends StatelessWidget {
     return StreamBuilder(
       stream: hc.channel.stream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: Text('Start typing something'));
-        }
+        if (!snapshot.hasData)
+          return Center(child: Text('Start typing something...'));
+
         final json = snapshot.data;
 
         final messages = jsonDecode(json);
